@@ -1,12 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'tailwindcss': require.resolve('tailwindcss'),
-    };
-    return config;
-  },
+  // Son versiya Next.js üçün sadə konfiqurasiya
+  reactStrictMode: true,
+  swcMinify: true,
 };
 
 module.exports = nextConfig; 
