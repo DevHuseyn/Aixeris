@@ -673,7 +673,7 @@ export default function ModernEarthquakesPage() {
                                     />
                                     <Tooltip 
                                       formatter={(value: any) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
-                                      labelFormatter={(label) => `Maqnituda: ${label}`}
+                                      labelFormatter={(label: number) => `Maqnituda: ${label}`}
                                       contentStyle={{
                                         backgroundColor: '#0A1A2F',
                                         borderRadius: '0.5rem',
@@ -731,7 +731,7 @@ export default function ModernEarthquakesPage() {
                                     />
                                     <Tooltip 
                                       formatter={(value: any) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
-                                      labelFormatter={(label) => `Tarix: ${label}`}
+                                      labelFormatter={(label: number) => `Tarix: ${label}`}
                                       contentStyle={{
                                         backgroundColor: '#0A1A2F',
                                         borderRadius: '0.5rem',
