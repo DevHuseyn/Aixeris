@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradient Definitions -->
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00E5CC" />
+      <stop offset="50%" style="stop-color:#00B4A2" />
+      <stop offset="100%" style="stop-color:#8B6FFF" />
+    </linearGradient>
+    <linearGradient id="circuitGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00E5CC;stop-opacity:0.5" />
+      <stop offset="50%" style="stop-color:#00B4A2;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#8B6FFF;stop-opacity:0.5" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Circuit Pattern -->
+  <path d="M50,256 H150 M362,256 H462 M256,50 V150 M256,362 V462" 
+        stroke="url(#circuitGradient)" stroke-width="4" />
+  <circle cx="256" cy="256" r="200" stroke="url(#mainGradient)" stroke-width="8" fill="none" />
+
+  <!-- Globe Grid Lines -->
+  <path d="M106,256 A150,150 0 0,1 406,256" stroke="url(#mainGradient)" stroke-width="2" fill="none" opacity="0.7" />
+  <path d="M106,256 A150,150 0 0,0 406,256" stroke="url(#mainGradient)" stroke-width="2" fill="none" opacity="0.7" />
+  <path d="M256,106 A150,150 0 0,1 256,406" stroke="url(#mainGradient)" stroke-width="2" fill="none" opacity="0.7" />
+  <path d="M256,106 A150,150 0 0,0 256,406" stroke="url(#mainGradient)" stroke-width="2" fill="none" opacity="0.7" />
+
+  <!-- AI Neural Network Nodes -->
+  <circle cx="256" cy="256" r="8" fill="url(#mainGradient)" />
+  <circle cx="206" cy="206" r="6" fill="url(#mainGradient)" />
+  <circle cx="306" cy="206" r="6" fill="url(#mainGradient)" />
+  <circle cx="206" cy="306" r="6" fill="url(#mainGradient)" />
+  <circle cx="306" cy="306" r="6" fill="url(#mainGradient)" />
+
+  <!-- Neural Network Connections -->
+  <line x1="256" y1="256" x2="206" y2="206" stroke="url(#mainGradient)" stroke-width="2" opacity="0.7" />
+  <line x1="256" y1="256" x2="306" y2="206" stroke="url(#mainGradient)" stroke-width="2" opacity="0.7" />
+  <line x1="256" y1="256" x2="206" y2="306" stroke="url(#mainGradient)" stroke-width="2" opacity="0.7" />
+  <line x1="256" y1="256" x2="306" y2="306" stroke="url(#mainGradient)" stroke-width="2" opacity="0.7" />
+
+  <!-- Additional Decorative Elements -->
+  <circle cx="256" cy="256" r="180" stroke="url(#circuitGradient)" stroke-width="1" fill="none" opacity="0.3" />
+  <circle cx="256" cy="256" r="160" stroke="url(#circuitGradient)" stroke-width="1" fill="none" opacity="0.2" />
+</svg> 
