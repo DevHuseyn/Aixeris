@@ -52,10 +52,14 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      backgroundColor: {
-        background: 'var(--background)',
-      },
+    },
+    backgroundColor: {
+      background: "var(--background)",
+      transparent: "transparent",
+      current: "currentColor",
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwindcss-animate"),
+  ],
 }; 
