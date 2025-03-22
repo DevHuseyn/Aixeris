@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { motion } from "framer-motion";
 
 // Xəritə stillərini müəyyən edirik
 const mapStyles = [
@@ -131,65 +130,68 @@ export function AzerbaijanMap({ earthquakes, mapType = "Standart" }: MapProps) {
                     magnitude >= 3 ? "#10B981" :
                     "#6366F1";
 
-      const circle = L.circleMarker([lat, lng], {
-        radius: getRadius(),
-        fillColor: color,
-        color: "white",
-        weight: 2,
-        opacity: 0.8,
-        fillOpacity: 0.6,
-        className: 'earthquake-marker'
-      }).addTo(markersRef.current);
-
-      // Popup məlumatı
-      const popupContent = `
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 min-w-[200px]">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            ${earthquake.properties.title}
-          </h3>
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-gray-600 dark:text-gray-300">Maqnituda:</span>
-              <span class="font-semibold text-${color}">${magnitude}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-gray-600 dark:text-gray-300">Tarix:</span>
-              <span class="text-gray-900 dark:text-white">
-                ${new Date(earthquake.properties.time).toLocaleString("az-AZ")}
-              </span>
-            </div>
-            <button
-              class="w-full mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
-              onclick="document.dispatchEvent(new CustomEvent('zoomToEarthquake', { detail: { lat: ${lat}, lng: ${lng} } }))"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M9 3a6 6 0 100 12A6 6 0 009 3zM1.5 9a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0z" clip-rule="evenodd" />
-                <path fill-rule="evenodd" d="M13.5 13.5l5 5-1.5 1.5-5-5 1.5-1.5z" clip-rule="evenodd" />
-              </svg>
-              Yaxınlaşdır
-            </button>
-          </div>
-        </div>
-      `;
-
-      circle.bindPopup(popupContent, {
-        className: 'custom-popup'
-      });
-
-      // Hover effektləri
-      circle.on('mouseover', function(this: L.CircleMarker) {
-        this.setStyle({
-          fillOpacity: 0.9,
-          weight: 3
-        });
-      });
-
-      circle.on('mouseout', function(this: L.CircleMarker) {
-        this.setStyle({
+      // markersRef.current null olmamasını kontrol ediyoruz
+      if (markersRef.current) {
+        const circle = L.circleMarker([lat, lng], {
+          radius: getRadius(),
+          fillColor: color,
+          color: "white",
+          weight: 2,
+          opacity: 0.8,
           fillOpacity: 0.6,
-          weight: 2
+          className: 'earthquake-marker'
+        }).addTo(markersRef.current);
+
+        // Popup məlumatı
+        const popupContent = `
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 min-w-[200px]">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              ${earthquake.properties.title}
+            </h3>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-gray-600 dark:text-gray-300">Maqnituda:</span>
+                <span class="font-semibold text-${color}">${magnitude}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-600 dark:text-gray-300">Tarix:</span>
+                <span class="text-gray-900 dark:text-white">
+                  ${new Date(earthquake.properties.time).toLocaleString("az-AZ")}
+                </span>
+              </div>
+              <button
+                class="w-full mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                onclick="document.dispatchEvent(new CustomEvent('zoomToEarthquake', { detail: { lat: ${lat}, lng: ${lng} } }))"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 3a6 6 0 100 12A6 6 0 009 3zM1.5 9a7.5 7.5 0 1115 0 7.5 7.5 0 01-15 0z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M13.5 13.5l5 5-1.5 1.5-5-5 1.5-1.5z" clip-rule="evenodd" />
+                </svg>
+                Yaxınlaşdır
+              </button>
+            </div>
+          </div>
+        `;
+
+        circle.bindPopup(popupContent, {
+          className: 'custom-popup'
         });
-      });
+
+        // Hover effektləri
+        circle.on('mouseover', function(this: L.CircleMarker) {
+          this.setStyle({
+            fillOpacity: 0.9,
+            weight: 3
+          });
+        });
+
+        circle.on('mouseout', function(this: L.CircleMarker) {
+          this.setStyle({
+            fillOpacity: 0.6,
+            weight: 2
+          });
+        });
+      }
     });
   }, [earthquakes]);
 

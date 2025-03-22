@@ -12,13 +12,9 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
   ResponsiveContainer
 } from "recharts";
-import Image from 'next/image';
+import Link from 'next/link';
 
 // Əlavə CSS stil
 const datePickerStyles = {
@@ -253,14 +249,14 @@ export default function ModernEarthquakesPage() {
     const match = translatedPlace.match(/(\d+)\s*km\s*(N|S|E|W|NE|NW|SE|SW)\s*of\s*([^,]+)/);
     
     if (match) {
-      const [_, distance, direction, location] = match;
+      const [, distance, direction, location] = match;
       return `${location}-dan ${distance} km ${directions[direction + ' of'] || ''} məsafədə`;
     }
 
     // "near" patternini yoxla
     const nearMatch = translatedPlace.match(/(near|Near)\s+([^,]+)/);
     if (nearMatch) {
-      const [_, near, location] = nearMatch;
+      const [, near, location] = nearMatch;
       return `${location} ${directions[near]} `;
     }
 
@@ -302,7 +298,19 @@ export default function ModernEarthquakesPage() {
       console.log('API cavabı:', data);
 
       // Bütün zəlzələləri götürək və birbaşa state-ə əlavə edək
-      const allEarthquakes = data.features.map((feature: any) => ({
+      const allEarthquakes = data.features.map((feature: {
+        id: string;
+        properties: {
+          mag: number;
+          place: string;
+          time: number;
+          url: string;
+          title: string;
+        };
+        geometry: {
+          coordinates: number[];
+        };
+      }) => ({
         id: feature.id,
         properties: {
           mag: feature.properties.mag,
@@ -412,7 +420,7 @@ export default function ModernEarthquakesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Geri dönmə düyməsi */}
           <div className="absolute left-4 top-4 z-10">
-            <a
+            <Link
               href="/"
               className="inline-flex items-center px-4 py-2 bg-[#0A1A2F]/50 backdrop-blur-sm text-white rounded-lg border border-[#00B4A2]/20 hover:bg-[#00B4A2]/10 transition-all duration-300"
             >
@@ -429,7 +437,7 @@ export default function ModernEarthquakesPage() {
                 />
               </svg>
               Ana Səhifə
-            </a>
+            </Link>
           </div>
 
           <div className="bg-[#0A1A2F]/50 backdrop-blur-sm rounded-2xl p-6 border border-[#00B4A2]/20">
@@ -747,7 +755,7 @@ export default function ModernEarthquakesPage() {
                                       }} 
                                     />
                                     <Tooltip 
-                                      formatter={(value: any) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
+                                      formatter={(value: number) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
                                       labelFormatter={(label) => `Maqnituda: ${label}`}
                                       contentStyle={{
                                         backgroundColor: '#0A1A2F',
@@ -805,7 +813,7 @@ export default function ModernEarthquakesPage() {
                                       }} 
                                     />
                                     <Tooltip 
-                                      formatter={(value: any) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
+                                      formatter={(value: number) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
                                       labelFormatter={(label) => `Tarix: ${label}`}
                                       contentStyle={{
                                         backgroundColor: '#0A1A2F',
