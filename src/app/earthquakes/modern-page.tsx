@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import DatePicker from "react-datepicker";
@@ -31,13 +31,37 @@ const calendarContainerStyles = `
   .react-datepicker__portal,
   .react-datepicker-popper {
     z-index: 9999 !important;
+    transform-origin: bottom !important;
+  }
+  .react-datepicker-popper {
+    transform: translate3d(0, -8px, 0) !important;
+    margin-top: -8px !important;
+    top: 0 !important;
+    inset: auto auto 100% auto !important;
+  }
+  .react-datepicker-popper .react-datepicker__triangle {
+    display: none !important;
+  }
+  .react-datepicker-popper[data-placement^='bottom'] {
+    top: auto !important;
+    bottom: 100% !important;
+    transform-origin: top !important;
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
+  }
+  .react-datepicker-popper[data-placement^='top'] {
+    transform-origin: bottom !important;
+    margin-bottom: 0 !important;
+    margin-top: -8px !important;
   }
   .react-datepicker {
     font-family: inherit;
     border: none;
     box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
     border-radius: 1rem;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    transform: translateY(-8px);
+    width: 280px;
   }
   .react-datepicker__header {
     background: linear-gradient(135deg, #6366F1, #4F46E5);
@@ -51,13 +75,16 @@ const calendarContainerStyles = `
     font-size: 1.1rem;
   }
   .react-datepicker__day-name {
+    width: 1.8rem;
+    line-height: 1.8rem;
+    margin: 0.1rem;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 500;
   }
   .react-datepicker__day {
-    width: 2.5rem;
-    line-height: 2.5rem;
-    margin: 0.2rem;
+    width: 1.8rem;
+    line-height: 1.8rem;
+    margin: 0.1rem;
     border-radius: 0.5rem;
     transition: all 0.2s ease;
   }
@@ -90,6 +117,9 @@ const calendarContainerStyles = `
   .react-datepicker__year-option:hover,
   .react-datepicker__month-option:hover {
     background-color: #E0E7FF;
+  }
+  .react-datepicker__month-container {
+    width: 280px;
   }
 `;
 
@@ -139,6 +169,7 @@ export default function ModernEarthquakesPage() {
   const [hasSearched, setHasSearched] = useState(false);
   const [activeTab, setActiveTab] = useState<'results' | 'analysis'>('results');
   const [mapType, setMapType] = useState<string>("Standart");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   // Zəlzələ yerini Azərbaycan dilinə tərcümə edən funksiya
   const translateLocation = (place: string) => {
@@ -237,38 +268,8 @@ export default function ModernEarthquakesPage() {
     return translatedPlace.replace(/, Azerbaijan/g, '');
   };
 
-  const analysisData = useMemo(() => {
-    if (!earthquakes.length) return null;
-
-    const magnitudeGroups = earthquakes.reduce((acc, eq) => {
-      const mag = Math.floor(eq.properties.mag);
-      acc[mag] = (acc[mag] || 0) + 1;
-      return acc;
-    }, {} as Record<number, number>);
-
-    const magnitudeData = Object.entries(magnitudeGroups).map(([mag, count]) => ({
-      magnitude: `${mag}.0-${mag}.9`,
-      count
-    }));
-
-    const dailyGroups = earthquakes.reduce((acc, eq) => {
-      const date = new Date(eq.properties.time).toLocaleDateString("az-AZ");
-      acc[date] = (acc[date] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    const dailyData = Object.entries(dailyGroups).map(([date, count]) => ({
-      date,
-      count
-    }));
-
-    return {
-      magnitudeData,
-      dailyData
-    };
-  }, [earthquakes]);
-
-  const fetchEarthquakes = async () => {
+  // fetchEarthquakes funksiyasını useCallback ilə sarmalayaq ki, bağımlılıqlar düzgün işləsin
+  const fetchEarthquakes = useCallback(async () => {
     setLoading(true);
     try {
       const url = new URL('https://earthquake.usgs.gov/fdsnws/event/1/query');
@@ -320,6 +321,7 @@ export default function ModernEarthquakesPage() {
 
       setEarthquakes(allEarthquakes);
       setHasSearched(true);
+      setLastUpdated(new Date());
 
     } catch (error) {
       console.error("Zəlzələ məlumatları yüklənərkən xəta baş verdi:", error);
@@ -328,7 +330,55 @@ export default function ModernEarthquakesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [startDate, endDate]);
+
+  // Avtomatik yeniləmə üçün useEffect
+  useEffect(() => {
+    // İlk yükləmədə məlumatları çəkmək (əgər əvvəlcədən axtarılmamışsa)
+    if (!hasSearched) return;
+
+    // 30 dəqiqədə bir məlumatları yeniləmək (30 * 60 * 1000 millisaniyə)
+    const autoUpdateInterval = setInterval(() => {
+      console.log("Avtomatik yeniləmə başladıldı...");
+      fetchEarthquakes();
+    }, 30 * 60 * 1000);
+    
+    // Komponentin təmizlənməsində intervalı təmizləmək
+    return () => {
+      clearInterval(autoUpdateInterval);
+    };
+  }, [hasSearched, fetchEarthquakes]);
+
+  const analysisData = useMemo(() => {
+    if (!earthquakes.length) return null;
+
+    const magnitudeGroups = earthquakes.reduce((acc, eq) => {
+      const mag = Math.floor(eq.properties.mag);
+      acc[mag] = (acc[mag] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    const magnitudeData = Object.entries(magnitudeGroups).map(([mag, count]) => ({
+      magnitude: `${mag}.0-${mag}.9`,
+      count
+    }));
+
+    const dailyGroups = earthquakes.reduce((acc, eq) => {
+      const date = new Date(eq.properties.time).toLocaleDateString("az-AZ");
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const dailyData = Object.entries(dailyGroups).map(([date, count]) => ({
+      date,
+      count
+    }));
+
+    return {
+      magnitudeData,
+      dailyData
+    };
+  }, [earthquakes]);
 
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
@@ -398,6 +448,7 @@ export default function ModernEarthquakesPage() {
                       className="w-full px-4 py-2 rounded-lg border border-[#00B4A2]/20 bg-[#0A1A2F]/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-[#00B4A2] focus:border-transparent transition-all duration-200"
                       dateFormat="dd/MM/yyyy"
                       maxDate={new Date()}
+                      popperPlacement="top-end"
                     />
                   </div>
                   <div style={datePickerStyles}>
@@ -411,6 +462,7 @@ export default function ModernEarthquakesPage() {
                       dateFormat="dd/MM/yyyy"
                       maxDate={new Date()}
                       minDate={startDate}
+                      popperPlacement="top-end"
                     />
                   </div>
                 </div>
@@ -484,6 +536,29 @@ export default function ModernEarthquakesPage() {
           </div>
         ) : hasSearched ? (
           <>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-white">{earthquakes.length} zəlzələ tapıldı</h2>
+              {lastUpdated && (
+                <div className="flex items-center text-gray-300 text-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  </svg>
+                  Son yeniləmə: {lastUpdated.toLocaleString("az-AZ")}
+                  <div className="ml-2 px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">
+                    Avtomatik yeniləmə aktivdir
+                  </div>
+                  <button 
+                    onClick={fetchEarthquakes}
+                    className="ml-2 p-1.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-full transition-colors"
+                    title="İndi yenilə"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
               {/* Xəritə bölməsi */}
               <div className="lg:col-span-4 bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
@@ -673,7 +748,7 @@ export default function ModernEarthquakesPage() {
                                     />
                                     <Tooltip 
                                       formatter={(value: any) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
-                                      labelFormatter={(label: number) => `Maqnituda: ${label}`}
+                                      labelFormatter={(label) => `Maqnituda: ${label}`}
                                       contentStyle={{
                                         backgroundColor: '#0A1A2F',
                                         borderRadius: '0.5rem',
@@ -731,7 +806,7 @@ export default function ModernEarthquakesPage() {
                                     />
                                     <Tooltip 
                                       formatter={(value: any) => [`${value} zəlzələ`, 'Baş verən zəlzələ sayı']}
-                                      labelFormatter={(label: number) => `Tarix: ${label}`}
+                                      labelFormatter={(label) => `Tarix: ${label}`}
                                       contentStyle={{
                                         backgroundColor: '#0A1A2F',
                                         borderRadius: '0.5rem',

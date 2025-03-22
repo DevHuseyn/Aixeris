@@ -1,14 +1,14 @@
 [build]
-  command = "npm install && npm run build"
-  publish = ".next"
+  command = "npm run build"
+  publish = "out"
 
 [build.environment]
-  NEXT_PUBLIC_BASE_PATH = ""
-  NODE_VERSION = "20.11.1"
-  NPM_FLAGS = "--legacy-peer-deps --no-optional"
-
+  NODE_VERSION = "20"
+  
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-[functions]
-  included_files = ["node_modules/@tailwindcss/oxide-linux-x64-gnu/**/*"] 
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,8 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Son versiya Next.js üçün sadə konfiqurasiya
-  reactStrictMode: true,
-  swcMinify: true,
+  /* config options here */
+  output: 'export',
+  images: {
+    unoptimized: true,
+  },
+  trailingSlash: true,
 };
 
 module.exports = nextConfig; 

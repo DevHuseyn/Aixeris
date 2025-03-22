@@ -139,11 +139,7 @@ export function AzerbaijanMap({ earthquakes, mapType = "Standart" }: MapProps) {
         opacity: 0.8,
         fillOpacity: 0.6,
         className: 'earthquake-marker'
-      });
-      
-      if (markersRef.current) {
-        circle.addTo(markersRef.current);
-      }
+      }).addTo(markersRef.current);
 
       // Popup məlumatı
       const popupContent = `

@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import React from 'react';
 
 const features = [
   {
@@ -22,13 +23,46 @@ const features = [
   },
   {
     title: "Zəlzələ İzləmə",
-    description: "AI əsaslı real-time zəlzələ monitorinqi və risk təhlili sistemləri.",
-    icon: "📊"
+    description: "Real-time zəlzələ monitorinqi və hər yarım saatda avtomatik yenilənən məlumatlarla risk təhlili.",
+    icon: "📊",
+    link: "/earthquakes",
+    linkText: "Xəritəyə baxın"
   }
 ];
 
 export function WorldMapDemo() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Haqqımızda bölməsinə kaydırma funksiyası
+  const scrollToAbout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const aboutSection = document.getElementById('about-section');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Əlaqə modalını açıb-bağlama funksiyası
+  const toggleContactModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowContactModal(!showContactModal);
+  };
+  
+  // Açılır pəncərəni xaricində klik ediləndə bağlamaq üçün
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#1B4B6C] via-[#142F47] to-[#1A1A24] text-white overflow-hidden flex flex-col">
@@ -44,6 +78,7 @@ export function WorldMapDemo() {
                   width={32}
                   height={32}
                   className="w-full h-full drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]"
+                  unoptimized
                 />
               </div>
               <div className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
@@ -52,30 +87,46 @@ export function WorldMapDemo() {
             </div>
             
             {/* Dropdown Menu */}
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2"
+                className="rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
               >
-                <span>Xəritələr</span>
+                <span className="z-10 relative">Xəritələr</span>
                 <svg 
-                  className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'transform rotate-180' : ''}`} 
+                  className={`w-4 h-4 transition-transform duration-200 z-10 relative ${isDropdownOpen ? 'transform rotate-180' : ''}`} 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
+                <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
               </button>
 
               {/* Dropdown Content */}
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-xl bg-[#0A1A2F] border border-[#00B4A2]/20 shadow-lg py-1 z-50">
+                <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#0A1A2F] border border-[#00B4A2]/20 shadow-lg py-2 z-50">
                   <a
                     href="/earthquakes"
-                    className="block px-4 py-2 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200"
+                    className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
                   >
-                    Zəlzələ Xəritəsi
+                    <span className="text-lg">📊</span>
+                    <div>
+                      <div className="font-medium text-white">Zəlzələ Xəritəsi</div>
+                      <div className="text-xs text-gray-400">Hər 30 dəqiqədə yenilənir</div>
+                    </div>
+                  </a>
+                  <div className="border-t border-[#00B4A2]/10 my-1"></div>
+                  <a
+                    href="#"
+                    className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
+                  >
+                    <span className="text-lg">🌍</span>
+                    <div>
+                      <div className="font-medium text-white">Məkan Analizi</div>
+                      <div className="text-xs text-gray-400">Tezliklə əlavə olunacaq</div>
+                    </div>
                   </a>
                 </div>
               )}
@@ -93,7 +144,7 @@ export function WorldMapDemo() {
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <div className="relative min-h-[80vh] flex items-center">
+        <div className="relative min-h-screen flex items-center pt-20 pb-24">
           <div className="mx-auto w-full max-w-7xl px-4 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left Content */}
@@ -136,13 +187,15 @@ export function WorldMapDemo() {
                     transition={{ delay: 0.4, duration: 0.5 }}
                   >
                     <a
-                      href="/about"
-                      className="rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-8 py-4 text-base font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105"
+                      href="#about-section"
+                      onClick={scrollToAbout}
+                      className="rounded-full px-8 py-4 text-base font-semibold text-white border-2 border-[#00B4A2] hover:border-[#00E5CC] hover:bg-[#00B4A2]/10 transition-all duration-300 hover:scale-105"
                     >
                       Haqqımızda
                     </a>
                     <a
-                      href="/contact"
+                      href="#"
+                      onClick={toggleContactModal}
                       className="rounded-full px-8 py-4 text-base font-semibold text-white border-2 border-[#00B4A2] hover:border-[#00E5CC] hover:bg-[#00B4A2]/10 transition-all duration-300 hover:scale-105"
                     >
                       Əlaqə
@@ -171,6 +224,7 @@ export function WorldMapDemo() {
                           height={400}
                           className="w-full h-full object-contain transform hover:scale-105 transition-transform duration-500 hover:rotate-[360deg] transition-all duration-[2000ms] drop-shadow-[0_0_15px_rgba(0,180,162,0.5)]"
                           priority
+                          unoptimized
                         />
                       </div>
                     </div>
@@ -181,8 +235,11 @@ export function WorldMapDemo() {
           </div>
         </div>
 
-        {/* About Section */}
-        <div className="py-24 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50">
+        {/* About Section Anchor */}
+        <div id="about-section" className="relative -top-24"></div>
+        
+        {/* About Section Content */}
+        <div className="py-32 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left side - Photo */}
@@ -195,13 +252,15 @@ export function WorldMapDemo() {
                 <div className="relative w-full aspect-square max-w-md mx-auto">
                   <div className="absolute inset-0 bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] rounded-2xl transform rotate-6 blur-2xl opacity-20"></div>
                   <div className="relative bg-[#0A1A2F]/50 backdrop-blur-sm rounded-2xl overflow-hidden border-2 border-[#00B4A2]/20 shadow-2xl">
-                    {/* Placeholder for your photo */}
+                    {/* Real photo instead of placeholder */}
                     <div className="aspect-square w-full relative">
-                      <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                        <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
+                      <Image
+                        src="/haqqimda.jpeg"
+                        alt="Aixeris Haqqında"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
                     </div>
                   </div>
                 </div>
@@ -226,17 +285,6 @@ export function WorldMapDemo() {
                   Məqsədimiz müasir texnologiyaları istifadə edərək, 
                   cəmiyyətə faydalı və dəyərli məhsullar təqdim etməkdir.
                 </p>
-                <div className="pt-4">
-                  <a
-                    href="/about"
-                    className="inline-flex items-center rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-8 py-4 text-base font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105"
-                  >
-                    Daha Ətraflı
-                    <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </a>
-                </div>
               </motion.div>
             </div>
           </div>
@@ -268,6 +316,19 @@ export function WorldMapDemo() {
                     </dt>
                     <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-200">
                       <p className="flex-auto">{feature.description}</p>
+                      {feature.link && (
+                        <div className="mt-4">
+                          <a
+                            href={feature.link}
+                            className="inline-flex items-center text-sm font-medium text-[#00E5CC] hover:text-[#8B6FFF] transition-colors duration-300"
+                          >
+                            {feature.linkText}
+                            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </a>
+                        </div>
+                      )}
                     </dd>
                   </motion.div>
                 ))}
@@ -299,7 +360,7 @@ export function WorldMapDemo() {
               className="flex items-center space-x-6"
             >
               <a
-                href="https://instagram.com/your-username"
+                href="https://www.instagram.com/_hsynn._?igsh=eXZkZmFmenA2dnF3"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors duration-300"
@@ -319,22 +380,18 @@ export function WorldMapDemo() {
               </a>
 
               <a
-                href="https://youtube.com/your-channel"
+                href="https://www.linkedin.com/in/huseyn-huseynli-9a843a309/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors duration-300"
               >
-                <span className="sr-only">YouTube</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="currentColor"
+                <span className="sr-only">LinkedIn</span>
+                <svg 
+                  className="h-6 w-6" 
+                  fill="currentColor" 
                   viewBox="0 0 24 24"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.418-4.814c.23-.861.907-1.538 1.768-1.768C5.746 5 12 5 12 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z"
-                    clipRule="evenodd"
-                  />
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
               </a>
             </motion.div>
@@ -354,6 +411,97 @@ export function WorldMapDemo() {
         {/* Decorative gradient */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent" />
       </footer>
+
+      {/* Contact Modal */}
+      <AnimatePresence>
+        {showContactModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              onClick={toggleContactModal}
+            />
+            
+            {/* Modal */}
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="bg-[#0A1A2F] rounded-2xl border border-[#00B4A2]/20 p-8 shadow-2xl w-[90%] max-w-md mx-auto"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF]">
+                    Bizimlə Əlaqə
+                  </h3>
+                  <button 
+                    onClick={toggleContactModal}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <a 
+                    href="mailto:huseynlihuseynn02@gmail.com" 
+                    className="flex items-center p-4 rounded-xl bg-[#142F47] hover:bg-[#1A3A58] transition-colors duration-200"
+                  >
+                    <span className="bg-[#00B4A2]/20 text-[#00E5CC] p-3 rounded-lg mr-4">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </span>
+                    <div>
+                      <div className="font-medium text-white">E-poçt</div>
+                      <div className="text-sm text-gray-300">huseynlihuseynn02@gmail.com</div>
+                    </div>
+                  </a>
+
+                  <a 
+                    href="https://www.linkedin.com/in/huseyn-huseynli-9a843a309/" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center p-4 rounded-xl bg-[#142F47] hover:bg-[#1A3A58] transition-colors duration-200"
+                  >
+                    <span className="bg-[#00B4A2]/20 text-[#00E5CC] p-3 rounded-lg mr-4">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                      </svg>
+                    </span>
+                    <div>
+                      <div className="font-medium text-white">LinkedIn</div>
+                      <div className="text-sm text-gray-300">Hüseyn Hüseynli</div>
+                    </div>
+                  </a>
+
+                  <a 
+                    href="https://www.instagram.com/_hsynn._?igsh=eXZkZmFmenA2dnF3" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center p-4 rounded-xl bg-[#142F47] hover:bg-[#1A3A58] transition-colors duration-200"
+                  >
+                    <span className="bg-[#00B4A2]/20 text-[#00E5CC] p-3 rounded-lg mr-4">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                      </svg>
+                    </span>
+                    <div>
+                      <div className="font-medium text-white">Instagram</div>
+                      <div className="text-sm text-gray-300">@_hsynn._</div>
+                    </div>
+                  </a>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 } 
