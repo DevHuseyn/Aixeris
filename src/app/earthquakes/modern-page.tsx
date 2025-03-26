@@ -161,8 +161,8 @@ export default function ModernEarthquakesPage() {
   const [startDate, setStartDate] = useState<Date>(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [earthquakes, setEarthquakes] = useState<Earthquake[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'results' | 'analysis'>('results');
   const [mapType, setMapType] = useState<string>("Standart");
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -264,28 +264,30 @@ export default function ModernEarthquakesPage() {
     return translatedPlace.replace(/, Azerbaijan/g, '');
   };
 
-  // fetchEarthquakes funksiyasını useCallback ilə sarmalayaq ki, bağımlılıqlar düzgün işləsin
+  // USGS API'sinden zəlzələ məlumatlarını çəkir
   const fetchEarthquakes = useCallback(async () => {
+    if (typeof window === 'undefined') {
+      return; // Server-side rendering zamanı işlem yapmayı engelle
+    }
+    
     setLoading(true);
+    
+    // USGS API'sinin formatına uyğun tarixi format
+    const formatDate = (date: Date) => {
+      return date.toISOString().split('.')[0]; // 2023-01-01T00:00:00 formatı
+    };
+    
     try {
-      const url = new URL('https://earthquake.usgs.gov/fdsnws/event/1/query');
-      url.searchParams.append('format', 'geojson');
-      url.searchParams.append('starttime', startDate.toISOString());
-      url.searchParams.append('endtime', endDate.toISOString());
-      url.searchParams.append('minlatitude', AZERBAIJAN_BOUNDS.minlatitude.toString());
-      url.searchParams.append('maxlatitude', AZERBAIJAN_BOUNDS.maxlatitude.toString());
-      url.searchParams.append('minlongitude', AZERBAIJAN_BOUNDS.minlongitude.toString());
-      url.searchParams.append('maxlongitude', AZERBAIJAN_BOUNDS.maxlongitude.toString());
-      url.searchParams.append('orderby', 'time');
-
-      console.log('API sorğusu:', url.toString());
-
-      const response = await fetch(url.toString());
-
+      const apiUrl = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${formatDate(startDate)}&endtime=${formatDate(endDate)}&minlatitude=${AZERBAIJAN_BOUNDS.minlatitude}&maxlatitude=${AZERBAIJAN_BOUNDS.maxlatitude}&minlongitude=${AZERBAIJAN_BOUNDS.minlongitude}&maxlongitude=${AZERBAIJAN_BOUNDS.maxlongitude}`;
+      
+      console.log('USGS API URL:', apiUrl);
+      
+      const response = await fetch(apiUrl);
+      
       if (!response.ok) {
-        throw new Error(`HTTP xətası: ${response.status}`);
+        throw new Error(`API sorğusu uğursuz oldu: ${response.status}`);
       }
-
+      
       const data = await response.json();
       
       if (!data || !Array.isArray(data.features)) {
@@ -342,6 +344,10 @@ export default function ModernEarthquakesPage() {
 
   // Avtomatik yeniləmə üçün useEffect
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return; // Server-side rendering zamanı işlem yapmayı engelle
+    }
+    
     // İlk yükləmədə məlumatları çəkmək (əgər əvvəlcədən axtarılmamışsa)
     if (!hasSearched) return;
 
@@ -869,10 +875,10 @@ export default function ModernEarthquakesPage() {
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
+            <h3 className="mt-4 text-lg font-medium text-gray-200">
               Zəlzələ məlumatları gözləyir
             </h3>
-            <p className="mt-2 text-gray-500 dark:text-gray-400">
+            <p className="mt-2 text-gray-400">
               Məlumatları görmək üçün yuxarıdakı tarixləri seçib axtarış düyməsinə basın
             </p>
           </motion.div>

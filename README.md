@@ -1,4 +1,26 @@
+# Azerbaycan GIS Projesi
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Netlify Deployment
+
+Bu proje Netlify'da statik bir site olarak deploy edilmek üzere hazırlanmıştır. Proje için şu özellikler etkinleştirilmiştir:
+
+- Next.js 15 App Router yapısı kullanımı
+- Static Site Generation (SSG) desteği
+- Tarayıcı ortamı kontrolü (isBrowser)
+- SEO optimizasyonu
+- Harita görüntüleme için Leaflet desteği
+- OpenStreetMap API entegrasyonu
+
+### Deploy Etmek İçin
+
+1. Netlify'da yeni bir site oluşturun
+2. GitHub veya başka bir git sağlayıcısından repo'yu bağlayın
+3. Build ayarlarını şu şekilde ayarlayın:
+   - Build command: `npm run build`
+   - Publish directory: `out`
+4. Deploy butonuna tıklayın
 
 ## Getting Started
 
