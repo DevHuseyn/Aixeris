@@ -1,0 +1,23 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+  
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Sayfalarımızın doğru şekilde işlenmesi için gerekli yönlendirmeler
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+  conditions = {Role = ["anonymous"]}
+
+# 404 sayfası yönlendirmesi
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
