@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import React from 'react';
+import Link from 'next/link';
 
 const features = [
   {
@@ -26,7 +27,7 @@ const features = [
   },
   {
     title: "Məkan Analizi",
-    description: "Coğrafi məlumat sistemləri üzərindən təhlillər apararaq məkansal naxışları və əlaqələri aşkarlayın.",
+    description: "Coğrafi məlumat sistemlərini üzərindən təhlillər apararaq məkansal naxışları və əlaqələri aşkarlayın.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -48,15 +49,6 @@ export function WorldMapDemo() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
-
-  // Haqqımızda bölməsinə kaydırma funksiyası
-  const scrollToAbout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const aboutSection = document.getElementById('about-section');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
 
   // Əlaqə modalını açıb-bağlama funksiyası
   const toggleContactModal = (e: React.MouseEvent) => {
@@ -193,13 +185,12 @@ export function WorldMapDemo() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4, duration: 0.5 }}
                   >
-                    <a
-                      href="#about-section"
-                      onClick={scrollToAbout}
+                    <Link
+                      href="/about"
                       className="rounded-full px-8 py-4 text-base font-semibold text-white border-2 border-[#00B4A2] hover:border-[#00E5CC] hover:bg-[#00B4A2]/10 transition-all duration-300 hover:scale-105"
                     >
                       Haqqımızda
-                    </a>
+                    </Link>
                     <a
                       href="#"
                       onClick={toggleContactModal}
@@ -242,91 +233,25 @@ export function WorldMapDemo() {
           </div>
         </div>
 
-        {/* About Section Anchor */}
-        <div id="about-section" className="relative -top-24"></div>
-        
-        {/* About Section Content */}
-        <div className="py-32 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left side - Photo */}
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                className="relative"
-              >
-                <div className="relative w-full aspect-square max-w-md mx-auto">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] rounded-2xl transform rotate-6 blur-2xl opacity-20"></div>
-                  <div className="relative bg-[#0A1A2F]/50 backdrop-blur-sm rounded-2xl overflow-hidden border-2 border-[#00B4A2]/20 shadow-2xl">
-                    {/* Real photo instead of placeholder */}
-                    <div className="aspect-square w-full relative">
-                      <Image
-                        src="/haqqimda.jpeg"
-                        alt="Aixeris Haqqında"
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Right side - About content */}
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                className="space-y-6"
-              >
-                <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
-                  Haqqımızda
-                </h2>
-                <p className="text-xl text-gray-200 leading-relaxed">
-                  Biz texnologiya və məkan analizi sahəsində ixtisaslaşmış bir komandayıq. 
-                  Süni intellekt və coğrafi məlumat sistemlərini birləşdirərək, 
-                  innovativ həllər yaradırıq.
-                </p>
-                <p className="text-xl text-gray-200 leading-relaxed">
-                  Məqsədimiz müasir texnologiyaları istifadə edərək, 
-                  cəmiyyətə faydalı və dəyərli məhsullar təqdim etməkdir.
-                </p>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-
         {/* Features Section */}
-        <div className="py-24 bg-gradient-to-b from-[#142F47]/50 to-[#1A1A24]">
+        <div className="py-24 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-white drop-shadow-[0_0_10px_rgba(0,180,162,0.3)] sm:text-4xl">
-                Platformamızın Təklif Etdiyi Mövzular
-              </h2>
-              <p className="mt-6 text-lg leading-8 text-gray-200">
-                Texnologiya, süni intellekt və coğrafi məlumat sistemləri sahəsində 
-                ən son yeniliklər və araşdırmalar
-              </p>
-            </div>
-            <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-4">
-                {features.map((feature) => (
-                  <motion.div 
-                    key={feature.title}
-                    className="flex flex-col bg-[#0A1A2F]/50 backdrop-blur-sm rounded-2xl p-8 border border-[#00B4A2]/20 hover:border-[#00E5CC] transition-all duration-300 shadow-lg"
-                    whileHover={{ y: -5, scale: 1.02 }}
-                  >
-                    <dt className="text-3xl mb-4">{feature.icon}</dt>
-                    <dt className="text-xl font-semibold leading-7 text-white drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
-                      {feature.title}
-                    </dt>
-                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-200">
-                      <p className="flex-auto">{feature.description}</p>
-                    </dd>
-                  </motion.div>
-                ))}
-              </dl>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="bg-[#0A1A2F]/50 rounded-xl p-6 border border-[#00B4A2]/20 hover:border-[#00B4A2]/40 transition-all duration-300 hover:shadow-lg hover:shadow-[#00B4A2]/10 group"
+                >
+                  <div className="text-[#00E5CC] bg-[#00B4A2]/10 p-3 rounded-lg inline-block group-hover:scale-110 transition-transform duration-300">
+                    {feature.icon}
+                  </div>
+                  <h3 className="mt-4 text-xl font-semibold text-white">{feature.title}</h3>
+                  <p className="mt-2 text-gray-400">{feature.description}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
