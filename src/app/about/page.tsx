@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
@@ -9,6 +9,7 @@ import React from 'react';
 export default function AboutPage() {
   const [activeCertificate, setActiveCertificate] = useState<number | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const certificates = [
@@ -28,6 +29,11 @@ export default function AboutPage() {
     setActiveCertificate(null);
   };
   
+  const toggleComingSoonModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowComingSoonModal(!showComingSoonModal);
+  };
+
   // Açılır pəncərəni xaricində klik ediləndə bağlamaq üçün
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -100,6 +106,21 @@ export default function AboutPage() {
             
             {/* Buttons Container */}
             <div className="flex items-center space-x-4">
+              {/* Scriptler Button */}
+              <a
+                href="#"
+                onClick={toggleComingSoonModal}
+                className="rounded-full bg-gradient-to-r from-[#8B6FFF] to-[#00E5CC] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
+              >
+                <span className="z-10 relative flex items-center">
+                  <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  Scriptlər
+                </span>
+                <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+              </a>
+              
               {/* Dropdown Menu */}
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -416,6 +437,60 @@ export default function AboutPage() {
           </div>
         </div>
       )}
+
+      {/* Coming Soon Modal */}
+      <AnimatePresence>
+        {showComingSoonModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              onClick={toggleComingSoonModal}
+            />
+            
+            {/* Modal */}
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="bg-[#0A1A2F] rounded-2xl border border-[#00B4A2]/20 p-8 shadow-2xl w-[90%] max-w-md mx-auto"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF]">
+                    Tezliklə
+                  </h3>
+                  <button 
+                    onClick={toggleComingSoonModal}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="text-center py-8">
+                  <div className="text-[#00E5CC] mb-4">
+                    <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-300 text-lg mb-2">
+                    Bu funksionallıq hələ hazırlanır
+                  </p>
+                  <p className="text-gray-400">
+                    Biz daim xüsusiyyətləri təkmilləşdiririk və tezliklə sizə daha çox imkanlar təqdim edəcəyik
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 } 

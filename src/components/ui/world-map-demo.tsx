@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import Link from 'next/link';
 
@@ -48,12 +48,17 @@ const features = [
 export function WorldMapDemo() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Əlaqə modalını açıb-bağlama funksiyası
   const toggleContactModal = (e: React.MouseEvent) => {
     e.preventDefault();
     setShowContactModal(!showContactModal);
+  };
+
+  const toggleComingSoonModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowComingSoonModal(!showComingSoonModal);
   };
   
   // Açılır pəncərəni xaricində klik ediləndə bağlamaq üçün
@@ -92,43 +97,61 @@ export function WorldMapDemo() {
               </div>
             </div>
             
-            {/* Dropdown Menu */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
+            {/* Buttons Container */}
+            <div className="flex items-center space-x-4">
+              {/* Scriptler Button */}
+              <a
+                href="#"
+                onClick={toggleComingSoonModal}
+                className="rounded-full bg-gradient-to-r from-[#8B6FFF] to-[#00E5CC] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
               >
-                <span className="z-10 relative">Xəritələr</span>
-                <svg 
-                  className={`w-4 h-4 transition-transform duration-200 z-10 relative ${isDropdownOpen ? 'transform rotate-180' : ''}`} 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <span className="z-10 relative flex items-center">
+                  <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  Scriptlər
+                </span>
                 <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-              </button>
-
-              {/* Dropdown Content */}
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#0A1A2F] border border-[#00B4A2]/20 shadow-lg py-2 z-50">
-                  <a
-                    href="/spatial-analysis"
-                    className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
+              </a>
+              
+              {/* Dropdown Menu */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
+                >
+                  <span className="z-10 relative">Xəritələr</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-200 z-10 relative ${isDropdownOpen ? 'transform rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
                   >
-                    <span className="text-[#00E5CC] bg-[#00B4A2]/10 p-1.5 rounded-md flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </span>
-                    <div>
-                      <div className="font-medium text-white">Məkan Analizi</div>
-                      <div className="text-xs text-gray-400">Müxtəlif xəritələr mövcuddur</div>
-                    </div>
-                  </a>
-                </div>
-              )}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                </button>
+
+                {/* Dropdown Content */}
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#0A1A2F] border border-[#00B4A2]/20 shadow-lg py-2 z-50">
+                    <a
+                      href="/spatial-analysis"
+                      className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
+                    >
+                      <span className="text-[#00E5CC] bg-[#00B4A2]/10 p-1.5 rounded-md flex items-center justify-center">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </span>
+                      <div>
+                        <div className="font-medium text-white">Məkan Analizi</div>
+                        <div className="text-xs text-gray-400">Müxtəlif xəritələr mövcuddur</div>
+                      </div>
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -229,6 +252,189 @@ export function WorldMapDemo() {
                   </div>
                 </div>
               </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* GIS Software Section */}
+        <div className="py-24 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50 relative overflow-hidden">
+          {/* Background decorative elements */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+            <div className="absolute top-10 left-[10%] w-72 h-72 bg-[#00E5CC]/10 rounded-full filter blur-3xl"></div>
+            <div className="absolute bottom-10 right-[10%] w-96 h-96 bg-[#8B6FFF]/10 rounded-full filter blur-3xl"></div>
+            <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-[#00B4A2]/10 rounded-full filter blur-3xl"></div>
+            
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+          </div>
+          
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-16 text-center"
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.7 }}
+              >
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
+                  GİS Proqram Təminatları
+                </h2>
+              </motion.div>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="text-xl text-gray-300 max-w-3xl mx-auto"
+              >
+                Məkan analizləri və xəritələmə üçün ən yaxşı açıq mənbə proqram təminatlarını yükləyin
+              </motion.p>
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: "8rem" }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="h-1 mx-auto mt-6 bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF]"
+              ></motion.div>
+            </motion.div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {/* QGIS */}
+              <motion.a
+                href="https://www.qgis.org/en/site/forusers/download.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Qgis-icon.svg"
+                    alt="QGIS Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">QGIS</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Peşəkar GİS proqramı</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* PostgreSQL */}
+              <motion.a
+                href="https://www.postgresql.org/download/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Postgresql-icon.svg"
+                    alt="PostgreSQL Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">PostgreSQL</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Güclü verilənlər bazası</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* PostGIS */}
+              <motion.a
+                href="https://postgis.net/install/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Postgis-icon.png"
+                    alt="PostGIS Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">PostGIS</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Məkan verilənləri genişlənməsi</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* GeoServer */}
+              <motion.a
+                href="http://geoserver.org/download/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Geoserver-icon.png"
+                    alt="GeoServer Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">GeoServer</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Məkan məlumatları serveri</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* QField */}
+              <motion.a
+                href="https://qfield.org/get/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Qfield-icon.png"
+                    alt="QField Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">QField</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Mobil GİS həlli</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
             </div>
           </div>
         </div>
@@ -407,6 +613,60 @@ export function WorldMapDemo() {
                       <div className="text-sm text-gray-300">@_huseynn._</div>
                     </div>
                   </a>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Coming Soon Modal */}
+      <AnimatePresence>
+        {showComingSoonModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              onClick={toggleComingSoonModal}
+            />
+            
+            {/* Modal */}
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="bg-[#0A1A2F] rounded-2xl border border-[#00B4A2]/20 p-8 shadow-2xl w-[90%] max-w-md mx-auto"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF]">
+                    Tezliklə
+                  </h3>
+                  <button 
+                    onClick={toggleComingSoonModal}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="text-center py-8">
+                  <div className="text-[#00E5CC] mb-4">
+                    <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-300 text-lg mb-2">
+                    Bu funksionallıq hələ hazırlanır
+                  </p>
+                  <p className="text-gray-400">
+                    Biz daim xüsusiyyətləri təkmilləşdiririk və tezliklə sizə daha çox imkanlar təqdim edəcəyik
+                  </p>
                 </div>
               </motion.div>
             </div>

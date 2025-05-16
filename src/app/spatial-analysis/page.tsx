@@ -34,7 +34,7 @@ const mapTypes: MapType[] = [
       "İnteraktiv sorğu funksiyası",
       "Detallı məlumat görüntüləmə"
     ],
-    dataStats: "Son yeniləmə: 10.000+ məkan, 25+ kateqoriya",
+    dataStats: "",
     updateInfo: "Hər həftə məlumatlar yenilənir",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +56,7 @@ const mapTypes: MapType[] = [
       "Azərbaycan və qonşu ölkələr üzrə fokuslanma",
       "Tarixi zəlzələ məlumatları arxivi"
     ],
-    dataStats: "Son 30 gün: 500+ zəlzələ olayı qeydə alınıb",
+    dataStats: "",
     updateInfo: "Hər 30 dəqiqədə avtomatik yenilənmə",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="white">
