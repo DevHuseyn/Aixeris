@@ -122,6 +122,36 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
     style.textContent = '.leaflet-draw-draw-circle { display: none !important; }';
     document.head.appendChild(style);
     
+    // Edit butonu için özel JavaScript kodu ekle
+    const script = document.createElement('script');
+    script.textContent = `
+      // Leaflet Draw edit butonunun düzgün çalışması için özel kod
+      // Bu kod, her 500ms'de bir edit butonunu kontrol edecek
+      (function() {
+        let checkEditButton = setInterval(function() {
+          const editButton = document.querySelector('.leaflet-draw-edit-edit');
+          if (!editButton) return;
+          
+          // Eğer düzenleme butonunda sorun varsa, düzelt
+          if (editButton.classList.contains('leaflet-disabled') && document.querySelector('.leaflet-draw-toolbar')) {
+            const featureGroup = window.drawnItemsFeatureGroup;
+            if (featureGroup && featureGroup.getLayers().length > 0) {
+              editButton.classList.remove('leaflet-disabled');
+              editButton.setAttribute('href', '#');
+              editButton.setAttribute('title', 'Edit layers');
+              editButton.style.pointerEvents = 'auto';
+            }
+          }
+        }, 500);
+        
+        // Sayfadan ayrılırken interval'i temizle
+        window.addEventListener('beforeunload', function() {
+          if (checkEditButton) clearInterval(checkEditButton);
+        });
+      })();
+    `;
+    document.head.appendChild(script);
+    
     try {
       // Harita DOM elementi var mı kontrol et
       const mapContainer = document.getElementById('map');
@@ -170,6 +200,13 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
           .leaflet-draw-actions a { background-color: #0A1A2F !important; color: #00E5CC !important; }
           .leaflet-draw-actions a:hover { background-color: #142F47 !important; }
           
+          /* Düzenleme butonunun işlevselliğini iyileştir */
+          a.leaflet-draw-edit-edit:not(.leaflet-disabled) {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            opacity: 1 !important;
+          }
+          
           /* Daire butonunu ve ilgili öğeleri tamamen gizle */
           .leaflet-draw-draw-circle,
           a.leaflet-draw-draw-circle,
@@ -196,6 +233,9 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
       // Referansı kaydet
       drawnItemsLayerRef.current = drawnItemsLayer;
       
+      // Global pencere nesnesine erişim sağla (script için)
+      (window as any).drawnItemsFeatureGroup = drawnItemsLayer;
+      
       // Çizim kontrollerini ayarla
       const drawControl = new L.Control.Draw({
         draw: {
@@ -218,16 +258,88 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
           // Editör özelliklerini düzgün sağlamak için boş layer ekliyoruz
           featureGroup: drawnItemsLayer,
           // Düzenleme araçlarını etkinleştiriyoruz
-          edit: {}, // Boş obje ile edit ayarlarını etkinleştiriyoruz
+          edit: {
+            selectedPathOptions: {
+              dashArray: '10, 10',
+              fill: true,
+              fillColor: '#fe57a1',
+              fillOpacity: 0.1,
+              weight: 3
+            }
+          },
           remove: true
         }
       });
+      
+      // Referansı kaydet
+      drawControlRef.current = drawControl;
       
       // Doğrudan DOM olarak kontrolü eklemek yerine, 
       // harita hazır olduğunda ekleyelim
       map.whenReady(() => {
         try {
           map.addControl(drawControl);
+          
+          // Edit butonunun başlangıç durumunu ayarla - başlangıçta drawnItems yoksa devre dışı bırak
+          setTimeout(() => {
+            const editButton = document.querySelector('.leaflet-draw-edit-edit');
+            if (editButton) {
+              if (drawnItems && drawnItems.length > 0) {
+                // Katmanlar varsa, etkinleştir
+                editButton.classList.remove('leaflet-disabled');
+                editButton.setAttribute('title', 'Edit layers');
+                (editButton as HTMLElement).style.pointerEvents = 'auto';
+              } else {
+                // Katmanlar yoksa, devre dışı bırak
+                editButton.classList.add('leaflet-disabled');
+                editButton.setAttribute('title', 'No layers to edit');
+                (editButton as HTMLElement).style.pointerEvents = 'none';
+              }
+            }
+            
+            // Editör kontrolünü manual olarak hazırla
+            if (drawnItemsLayerRef.current && drawnItems && drawnItems.length > 0) {
+              // Önceki düzenleme kontrolünü temizle ve yeniden oluştur
+              map.removeControl(drawControl);
+              
+              // Yeni kontrol oluştur
+              const newDrawControl = new L.Control.Draw({
+                draw: {
+                  polygon: {
+                    allowIntersection: false,
+                    showArea: true,
+                    shapeOptions: getStyleForType('polygon')
+                  },
+                  polyline: {
+                    shapeOptions: getStyleForType('polyline')
+                  },
+                  rectangle: {
+                    shapeOptions: getStyleForType('rectangle')
+                  },
+                  circle: false,
+                  marker: {},
+                  circlemarker: false
+                },
+                edit: {
+                  featureGroup: drawnItemsLayerRef.current,
+                  edit: {
+                    selectedPathOptions: {
+                      dashArray: '10, 10',
+                      fill: true,
+                      fillColor: '#fe57a1',
+                      fillOpacity: 0.1,
+                      weight: 3
+                    }
+                  },
+                  remove: true
+                }
+              });
+              
+              // Kontrolü ekle ve referansı güncelle
+              map.addControl(newDrawControl);
+              drawControlRef.current = newDrawControl;
+            }
+          }, 100);
           
           // Haritanın yüklendiğini belirt
           console.log('Map is ready');
@@ -396,6 +508,11 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
               console.error('Error disabling draw handler:', e);
             }
             drawHandlerRef.current = null;
+          }
+          
+          // Window nesnesinden referansı temizle
+          if ((window as any).drawnItemsFeatureGroup) {
+            (window as any).drawnItemsFeatureGroup = null;
           }
           
           // Haritayı kaldır
@@ -909,8 +1026,9 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
             
             try {
               console.log(`Adding item ${index}, type: ${item.type}`);
-              const style = getStyleForType(item.type);
-              const geoJSON = { ...item.data };
+              
+              // GeoJSON'ı klonla
+              const geoJSON = structuredClone(item.data);
               
               // Tipini geoJSON'a ekle (daha sonra stil için kullanabiliriz)
               if (!geoJSON.properties) {
@@ -918,41 +1036,53 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
               }
               geoJSON.properties.type = item.type;
               
-              // L.geoJSON ile layer oluştururken onEachFeature parametresi ekle
-              const layer = L.geoJSON(geoJSON, { 
-                style,
-                onEachFeature: (feature, layer) => {
-                  // Her bir geometriye popup ekle
-                  if (layer) {
-                    try {
-                      // Bilgileri formatla
-                      const popupContent = formatGeometryInfo(feature);
-                      
-                      // Popup oluştur
-                      layer.bindPopup(popupContent, {
-                        maxWidth: 300,
-                        className: 'custom-popup',
-                        autoPan: true
-                      });
-                      
-                      // Mouse olayları ekle
-                      layer.on('click', (e) => {
-                        if (!selectionModeActive) {
-                          // Seçim modu aktif değilse popup aç
-                          layer.openPopup();
-                          // Olayın ilerlemesini durdur
-                          L.DomEvent.stopPropagation(e);
-                        }
-                      });
-                    } catch (error) {
-                      console.error("Popup eklenirken hata:", error);
-                    }
-                  }
-                }
-              });
+              // ÖNEMLİ: GeoJSON'ı doğrudan özel katmanlara dönüştür (Leaflet Draw ile uyumlu)
+              let layer;
               
-              drawnItemsLayerRef.current?.addLayer(layer);
-              console.log(`Added item ${index} to map`);
+              if (geoJSON.geometry.type === "Polygon") {
+                const coords = geoJSON.geometry.coordinates[0].map((c: number[]) => [c[1], c[0]]);
+                layer = L.polygon(coords, getStyleForType(item.type));
+              } 
+              else if (geoJSON.geometry.type === "LineString") {
+                const coords = geoJSON.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
+                layer = L.polyline(coords, getStyleForType(item.type));
+              }
+              else if (geoJSON.geometry.type === "Point") {
+                const coords = geoJSON.geometry.coordinates;
+                layer = L.marker([coords[1], coords[0]]);
+              } 
+              else {
+                // Diğer tipler için genel GeoJSON kullan
+                layer = L.geoJSON(geoJSON, {
+                  style: getStyleForType(item.type)
+                });
+              }
+              
+              // Orijinal özellikler ve metadataları ekle
+              if (layer) {
+                // Orijinal feature verisini ekle
+                layer.feature = geoJSON;
+                
+                // Popup ekle
+                const popupContent = formatGeometryInfo(geoJSON);
+                layer.bindPopup(popupContent, {
+                  maxWidth: 300,
+                  className: 'custom-popup',
+                  autoPan: true
+                });
+                
+                // Click olayını ekle
+                layer.on('click', (e) => {
+                  if (!selectionModeActive) {
+                    layer.openPopup();
+                    L.DomEvent.stopPropagation(e);
+                  }
+                });
+                
+                // Editlenebilir yap ve drawnItems'a ekle
+                drawnItemsLayerRef.current?.addLayer(layer);
+                console.log(`Added item ${index} to map`);
+              }
             } catch (itemError) {
               console.error(`Error adding item ${index} to layer:`, itemError);
             }
@@ -973,10 +1103,50 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
     }
   }, [drawnItems]);
   
+  // Edit butonunun etkinleştirilmesi için useEffect
+  useEffect(() => {
+    // Harita hazır değilse işlem yapma
+    if (!mapReadyRef.current) return;
+    
+    // Kısa bir gecikme ile uygula (DOM hazır olsun)
+    const timer = setTimeout(() => {
+      try {
+        // Edit butonunu bul
+        const editButton = document.querySelector('.leaflet-draw-edit-edit');
+        if (!editButton) return;
+        
+        // Eğer drawnItems varsa ve içinde öğe varsa, edit butonunu etkinleştir
+        if (drawnItems && drawnItems.length > 0) {
+          editButton.classList.remove('leaflet-disabled');
+          editButton.setAttribute('title', 'Edit layers');
+          // href özniteliğini ekle - önemli
+          editButton.setAttribute('href', '#');
+        } else {
+          // Aksi takdirde devre dışı bırak
+          editButton.classList.add('leaflet-disabled');
+          editButton.setAttribute('title', 'No layers to edit');
+        }
+      } catch (error) {
+        console.error('Edit butonu güncellenirken hata:', error);
+      }
+    }, 300);
+    
+    // Cleanup
+    return () => clearTimeout(timer);
+  }, [drawnItems, mapReadyRef.current]);
+  
   // Kontrol butonlarını içeren bölüm
   return (
     <div className="relative w-full h-full">
       <div id="map" className="w-full h-full rounded-xl overflow-hidden"></div>
+      
+      {/* Edit butonunun doğru çalışması için CSS düzeltmeleri */}
+      <style jsx global>{`
+        .leaflet-draw-edit-edit:not(.leaflet-disabled) {
+          pointer-events: auto !important;
+          cursor: pointer !important;
+        }
+      `}</style>
       
       {/* Popup stil tanımlaması */}
       <style jsx global>{`
@@ -998,6 +1168,21 @@ const MapComponent = memo(function MapComponent({ onDrawCreated, drawnItems, act
         }
         .custom-popup b {
           color: #00E5CC;
+        }
+        
+        /* Edit butonu düzeltmeleri */
+        .leaflet-draw-edit-edit {
+          cursor: pointer !important;
+        }
+        
+        .leaflet-draw-edit-edit:not(.leaflet-disabled) {
+          pointer-events: auto !important;
+          opacity: 1 !important;
+        }
+        
+        .leaflet-draw-edit-edit.leaflet-disabled {
+          cursor: default !important;
+          opacity: 0.5 !important;
         }
         
         /* Daire butonu ve ilgili elementleri gizle */
