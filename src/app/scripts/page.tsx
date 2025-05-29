@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
@@ -134,24 +133,20 @@ export default function ScriptsPage() {
           </Link>
         </div>
         
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-12 text-center"
+        <div 
+          className="mb-12 text-center opacity-0 translate-y-5"
+          style={{ animation: 'fadeInUp 0.5s forwards' }}
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
             Scriptlər
           </h1>
           <div className="h-1 w-32 mx-auto bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF]"></div>
-        </motion.div>
+        </div>
 
         {/* Scripts Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-16 bg-gradient-to-r from-[#0A1A2F]/80 to-[#142F47]/80 p-8 rounded-2xl border border-[#00B4A2]/20 backdrop-blur-sm shadow-xl relative overflow-hidden"
+        <div
+          className="mb-16 bg-gradient-to-r from-[#0A1A2F]/80 to-[#142F47]/80 p-8 rounded-2xl border border-[#00B4A2]/20 backdrop-blur-sm shadow-xl relative overflow-hidden opacity-0 translate-y-5"
+          style={{ animation: 'fadeInUp 0.5s 0.1s forwards' }}
         >
           <div className="grid grid-cols-1 gap-8 relative z-10">
             <div>
@@ -167,12 +162,59 @@ export default function ScriptsPage() {
               
               {/* Script cards will go here */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Şablon kodlar kaldırıldı */}
+                {/* Coğrafi Hesaplama Aracı Kartı */}
+                <Link href="/scripts/geographic-calculations" 
+                  className="block group bg-gradient-to-br from-[#0A1A2F] to-[#142F47] rounded-xl border border-[#00B4A2]/20 overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,180,162,0.2)] hover:border-[#00E5CC]/30 transform hover:-translate-y-1"
+                >
+                  <div className="h-48 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#00E5CC]/20 to-[#8B6FFF]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                    <Image
+                      src="/aixeris-logo.svg"
+                      alt="Coğrafi Hesaplama Aracı"
+                      width={400}
+                      height={300}
+                      className="w-full h-full object-contain p-10 transition-transform duration-500 group-hover:scale-105"
+                      unoptimized
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0A1A2F] to-transparent h-20 z-20"></div>
+                  </div>
+                  <div className="p-5 relative">
+                    <div className="absolute top-0 right-0 -mt-10 mr-4 bg-[#00E5CC] text-[#0A1A2F] text-xs font-bold py-1 px-3 rounded-full shadow-lg z-30">
+                      YENİ
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00E5CC] transition-colors duration-300">
+                      Coğrafi Hesaplama Aracı
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Alan, mesafe ölçme, tampon bölge oluşturma, kesişim ve birleşim analizleri yapabileceğiniz çok fonksiyonlu bir araç.
+                    </p>
+                    <div className="flex items-center text-[#00E5CC] text-sm font-medium">
+                      <span>Keşfet</span>
+                      <svg className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
+      
+      {/* Animasyon stilleri */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 } 
