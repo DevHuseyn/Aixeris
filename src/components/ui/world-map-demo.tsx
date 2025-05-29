@@ -100,7 +100,7 @@ export function WorldMapDemo() {
             {/* Buttons Container */}
             <div className="flex items-center space-x-4">
               {/* Scriptler Button */}
-              <a
+              <Link
                 href="/scripts"
                 className="rounded-full bg-gradient-to-r from-[#8B6FFF] to-[#00E5CC] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
               >
@@ -111,7 +111,7 @@ export function WorldMapDemo() {
                   Scriptlər
                 </span>
                 <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-              </a>
+              </Link>
               
               {/* Dropdown Menu */}
               <div className="relative" ref={dropdownRef}>
