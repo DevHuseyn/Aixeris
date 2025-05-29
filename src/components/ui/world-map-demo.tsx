@@ -101,8 +101,7 @@ export function WorldMapDemo() {
             <div className="flex items-center space-x-4">
               {/* Scriptler Button */}
               <a
-                href="#"
-                onClick={toggleComingSoonModal}
+                href="/scripts"
                 className="rounded-full bg-gradient-to-r from-[#8B6FFF] to-[#00E5CC] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
               >
                 <span className="z-10 relative flex items-center">
