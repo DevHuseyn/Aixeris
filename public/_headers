@@ -10,3 +10,6 @@
 
 /images/*
   Cache-Control: public, max-age=31536000, immutable 
+
+/certificates/*
+  X-Frame-Options: SAMEORIGIN
