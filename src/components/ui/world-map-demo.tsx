@@ -199,7 +199,7 @@ export function WorldMapDemo() {
                       Aixeris
                     </h1>
                     <h2 className="text-3xl lg:text-5xl font-bold text-gray-50 drop-shadow-[0_0_10px_rgba(0,180,162,0.2)]">
-                      Texnologiya və Məkan Zəkası
+                      Texnologiya və Məkan Analitikası
                     </h2>
                   </motion.div>
 
