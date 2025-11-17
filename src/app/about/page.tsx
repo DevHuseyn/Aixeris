@@ -228,7 +228,7 @@ export default function AboutPage() {
           className="mb-12 text-center"
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
-            Haqqımızda
+            Haqqımda
           </h1>
           <div className="h-1 w-32 mx-auto bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF]"></div>
         </motion.div>
