@@ -1,15 +1,10 @@
 [build]
   command = "npm run build"
-  publish = "out"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
-  
+  NEXT_USE_NETLIFY_EDGE = "true"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-# Tüm yolların uygun şekilde işlenmesi için
-[[redirects]]
-  from = "/*"
-  to = "/404.html"
-  status = 404

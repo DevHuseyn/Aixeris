@@ -6,12 +6,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+// Harita tipini tanımlama
+interface MapType {
+  id: string;
+  title: string;
+  description: string;
+  apiInfo?: string;
+  features?: string[];
+  dataStats?: string;
+  updateInfo?: string;
+  icon: React.ReactNode;
+  color: string;
+  path: string;
+  isAvailable: boolean;
+}
+
 // Harita tiplerini tanımlama
-const mapTypes = [
+const mapTypes: MapType[] = [
   {
     id: "cultural",
     title: "Mədəniyyət məkanları",
     description: "Muzey, teatr və tarixi abidələr xəritədə göstərilir",
+    apiInfo: "OpenStreetMap API və Overpass Turbo sorğuları istifadə edilir",
+    features: [
+      "Bakı şəhəri üzrə 200+ mədəni obyekt",
+      "Filtrlənə bilən kateqoriyalar",
+      "İnteraktiv sorğu funksiyası",
+      "Detallı məlumat görüntüləmə"
+    ],
+    dataStats: "",
+    updateInfo: "Hər həftə məlumatlar yenilənir",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -22,56 +46,31 @@ const mapTypes = [
     isAvailable: true
   },
   {
-    id: "transport",
-    title: "Nəqliyyat Sistemi",
-    description: "İctimai nəqliyyat marşrutları və infrastruktur xəritəsi",
+    id: "earthquake",
+    title: "Zəlzələ Xəritəsi",
+    description: "Son zəlzələ məlumatları və təsir bölgələri xəritəsi",
+    apiInfo: "USGS Earthquake API və GeoJSON formatında məlumatlar",
+    features: [
+      "Canlı məlumat yeniləmələri",
+      "Maqnituda və dərinlik filtri",
+      "Azərbaycan və qonşu ölkələr üzrə fokuslanma",
+      "Tarixi zəlzələ məlumatları arxivi"
+    ],
+    dataStats: "",
+    updateInfo: "Hər 30 dəqiqədə avtomatik yenilənmə",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="white">
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={2} 
+          d="M6 13h2l3-9 3 18 3-12 3 6h2"
+        />
       </svg>
     ),
-    color: "from-[#8B6FFF] to-[#6366F1]",
-    path: "/spatial-analysis/transport",
-    isAvailable: false
-  },
-  {
-    id: "environment",
-    title: "Ətraf Mühit",
-    description: "Ətraf mühit göstəriciləri və təbiət qoruq sahələri xəritəsi",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    color: "from-[#10B981] to-[#059669]",
-    path: "/spatial-analysis/environment",
-    isAvailable: false
-  },
-  {
-    id: "tourism",
-    title: "Turizm və Səyahət",
-    description: "Turistik yerlər, otellər və istirahət mərkəzləri xəritəsi",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ),
-    color: "from-[#F59E0B] to-[#D97706]",
-    path: "/spatial-analysis/tourism",
-    isAvailable: false
-  },
-  {
-    id: "business",
-    title: "Biznes və İqtisadiyyat",
-    description: "Sənaye zonaları, texnoparklar və biznes mərkəzləri xəritəsi",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
-    color: "from-[#EF4444] to-[#DC2626]",
-    path: "/spatial-analysis/business",
-    isAvailable: false
+    color: "from-[#FF3B30] to-[#C4302B]",
+    path: "/earthquakes",
+    isAvailable: true
   }
 ];
 
@@ -111,7 +110,7 @@ export default function SpatialAnalysisPage() {
     { top: '30%', left: '5%', delay: '1.9s', duration: '16s' }
   ];
 
-  const handleMapClick = (mapType: any) => {
+  const handleMapClick = (mapType: MapType) => {
     if (!mapType.isAvailable) {
       setPopupMessage("Çox yakında!");
       setShowPopup(true);
@@ -201,32 +200,28 @@ export default function SpatialAnalysisPage() {
       {/* Ana içerik */}
       <div className="max-w-7xl mx-auto px-4 py-16 relative z-10">
         {/* Geri dönüş düğmesi */}
-        <div className="mb-8">
+        <div className="flex justify-start mb-8">
           <Link
             href="/"
             prefetch={false}
-            className="inline-flex items-center px-4 py-2 bg-[#0A1A2F]/50 backdrop-blur-sm text-white rounded-lg border border-[#00B4A2]/20 hover:bg-[#00B4A2]/10 transition-all duration-300 shadow-md hover:shadow-lg"
+            className="group flex items-center space-x-3 px-7 py-3 rounded-xl bg-[#142F47]/40 backdrop-blur-md border-2 border-[#00B4A2]/20 hover:border-[#00E5CC]/40 shadow-lg hover:shadow-[0_0_25px_rgba(0,180,162,0.3)] transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2 text-[#00E5CC]"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Ana Səhifə
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00E5CC]/10 to-[#8B6FFF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#00B4A2]/20 group-hover:bg-[#00B4A2]/40 transition-colors duration-300">
+              <svg className="w-5 h-5 text-[#00E5CC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </span>
+            <span className="font-medium text-base text-white group-hover:text-[#00E5CC] transition-colors duration-300 relative z-10">
+              Ana Səhifəyə Qayıt
+            </span>
           </Link>
         </div>
 
         {/* Harita Seçim Bölümü */}
         <div className="py-10">
           <motion.h3 
-            className="text-2xl font-bold mb-8 text-center text-white relative inline-block"
+            className="text-2xl font-bold mb-2 text-center text-white relative inline-block"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -234,8 +229,9 @@ export default function SpatialAnalysisPage() {
             <span className="relative z-10">Hansı xəritəyə baxmaq istəyirsiniz?</span>
             <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-[#00E5CC]/0 via-[#00E5CC] to-[#00E5CC]/0"></span>
           </motion.h3>
+          <div className="mb-8"></div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {mapTypes.map((mapType, index) => (
               <motion.div
                 key={mapType.id}
@@ -250,7 +246,65 @@ export default function SpatialAnalysisPage() {
                   <div className="absolute inset-0 rounded-xl bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
                 </div>
                 <h4 className="text-xl font-semibold mb-2 text-white group-hover:text-[#00E5CC] transition-colors duration-300">{mapType.title}</h4>
-                <p className="text-gray-300 text-sm mb-4">{mapType.description}</p>
+                <p className="text-gray-300 text-sm mb-2">{mapType.description}</p>
+
+                {/* API Info */}
+                {mapType.apiInfo && (
+                  <div className="bg-[#142F47] rounded-md p-2 mb-2">
+                    <p className="text-gray-300 text-xs flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1 text-[#00E5CC]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      <span className="text-[#00E5CC] font-medium mr-1">API:</span> {mapType.apiInfo}
+                    </p>
+                  </div>
+                )}
+
+                {/* Features */}
+                {mapType.features && mapType.features.length > 0 && (
+                  <div className="mb-2 pl-1">
+                    <p className="text-[#00E5CC] text-xs font-medium mb-1 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Əsas xüsusiyyətlər:
+                    </p>
+                    <div className="grid grid-cols-2 gap-x-1 gap-y-1">
+                      {mapType.features.map((feature, idx) => (
+                        <p key={idx} className="text-gray-300 text-xs flex items-start">
+                          <span className="text-[#00E5CC] mr-1 mt-0.5">•</span>{" "}
+                          {feature}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Data Stats & Update Info */}
+                <div className="flex space-x-1 text-xs mb-2">
+                  {mapType.dataStats && (
+                    <div className="bg-[#142F47]/70 rounded-md py-1 px-2 flex-1">
+                      <p className="text-gray-300 flex items-center text-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1 text-[#00E5CC]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        {mapType.dataStats}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                
+                {mapType.updateInfo && (
+                  <div className="bg-[#142F47]/50 rounded-md py-1 px-2 mb-2">
+                    <p className="text-gray-300 flex items-center text-xs">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1 text-[#00E5CC]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      {mapType.updateInfo}
+                    </p>
+                  </div>
+                )}
+
                 <div className="flex justify-between items-center mt-4">
                   {mapType.isAvailable ? (
                     <Link 
@@ -284,51 +338,6 @@ export default function SpatialAnalysisPage() {
             ))}
           </div>
         </div>
-
-        {/* Bilgilendirme Bölümü */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="bg-[#0A1A2F]/70 backdrop-blur-md rounded-2xl p-8 mt-12 border border-[#00B4A2]/20 shadow-lg relative overflow-hidden"
-        >
-          <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute -top-12 -right-12 w-40 h-40 bg-[#00E5CC]/5 rounded-full filter blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#8B6FFF]/5 rounded-full filter blur-3xl"></div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
-            <div className="md:w-1/4 flex justify-center">
-              <div className="relative h-32 w-32 transform hover:scale-105 transition-all duration-300">
-                <Image 
-                  src="/aixeris-logo.svg" 
-                  alt="Aixeris Logo"
-                  width={128}
-                  height={128}
-                  className="drop-shadow-[0_0_10px_rgba(0,180,162,0.5)]"
-                  unoptimized
-                />
-              </div>
-            </div>
-            <div className="md:w-3/4">
-              <h3 className="text-xl font-bold mb-4 text-[#00E5CC] relative inline-block">
-                <span>OpenStreetMap API ilə Gücləndirilmiş Xəritələr</span>
-                <span className="absolute -bottom-1 left-0 w-full h-px bg-gradient-to-r from-[#00E5CC]/50 to-transparent"></span>
-              </h3>
-              <p className="text-gray-300 mb-4">
-                Bütün xəritələrimiz OpenStreetMap API-dən istifadə edərək hazırlanmışdır. Bu, Azərbaycan və dünya üzrə ən dəqiq və 
-                aktual məlumatları əldə etmənizi təmin edir. Seçdiyiniz xəritə növündən asılı olaraq müxtəlif təhlillər apara və 
-                məlumatları filtrlə bilərsiniz.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="bg-[#142F47] text-[#00E5CC] px-3 py-1 rounded-full text-xs border border-[#00E5CC]/20 shadow-sm hover:shadow-[#00E5CC]/20 hover:border-[#00E5CC]/30 transition-all duration-300 cursor-default">OpenStreetMap</span>
-                <span className="bg-[#142F47] text-[#00E5CC] px-3 py-1 rounded-full text-xs border border-[#00E5CC]/20 shadow-sm hover:shadow-[#00E5CC]/20 hover:border-[#00E5CC]/30 transition-all duration-300 cursor-default">Leaflet</span>
-                <span className="bg-[#142F47] text-[#00E5CC] px-3 py-1 rounded-full text-xs border border-[#00E5CC]/20 shadow-sm hover:shadow-[#00E5CC]/20 hover:border-[#00E5CC]/30 transition-all duration-300 cursor-default">GeoJSON</span>
-                <span className="bg-[#142F47] text-[#00E5CC] px-3 py-1 rounded-full text-xs border border-[#00E5CC]/20 shadow-sm hover:shadow-[#00E5CC]/20 hover:border-[#00E5CC]/30 transition-all duration-300 cursor-default">Məkansal Analiz</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
 
       {/* Custom animations */}

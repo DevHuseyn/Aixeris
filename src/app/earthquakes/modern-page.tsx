@@ -15,6 +15,7 @@ import {
   ResponsiveContainer
 } from "recharts";
 import Link from 'next/link';
+import { AixerisLoading } from "@/components/ui/aixeris-loading";
 
 // Əlavə CSS stil
 const datePickerStyles = {
@@ -148,13 +149,7 @@ interface Earthquake {
 }
 
 const LoadingSpinner = () => (
-  <div className="flex items-center justify-center">
-    <motion.div
-      className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-    />
-  </div>
+  <AixerisLoading label="Zəlzələ məlumatları yüklənir..." />
 );
 
 export default function ModernEarthquakesPage() {
@@ -422,27 +417,22 @@ export default function ModernEarthquakesPage() {
       </div>
 
       {/* Filtreleme Bölümü */}
-      <div className="relative py-8 border-b border-[#00B4A2]/10">
+      <div className="py-8 border-b border-[#00B4A2]/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Geri dönmə düyməsi */}
-          <div className="absolute left-4 top-4 z-10">
+          <div className="flex justify-start mb-6">
             <Link
               href="/"
-              className="inline-flex items-center px-4 py-2 bg-[#0A1A2F]/50 backdrop-blur-sm text-white rounded-lg border border-[#00B4A2]/20 hover:bg-[#00B4A2]/10 transition-all duration-300"
+              className="group flex items-center space-x-3 px-7 py-3 rounded-xl bg-[#142F47]/60 backdrop-blur-md border-2 border-[#00B4A2]/20 hover:border-[#00E5CC]/40 shadow-lg hover:shadow-[0_0_25px_rgba(0,180,162,0.3)] transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Ana Səhifə
+              <div className="absolute inset-0 bg-gradient-to-r from-[#00E5CC]/10 to-[#8B6FFF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#00B4A2]/20 group-hover:bg-[#00B4A2]/40 transition-colors duration-300">
+                <svg className="w-5 h-5 text-[#00E5CC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+              </span>
+              <span className="font-medium text-base text-white group-hover:text-[#00E5CC] transition-colors duration-300 relative z-10">
+                Ana Səhifəyə Qayıt
+              </span>
             </Link>
           </div>
 

@@ -2,70 +2,65 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import React from 'react';
+import Link from 'next/link';
 
 const features = [
   {
-    title: "Texnoloji Yeniliklər",
-    description: "Ən son texnoloji yenilikləri və trendləri kəşf edin, gələcəyin texnologiyalarını araşdırın.",
+    title: "Zəlzələ Analizi",
+    description: "USGS API ilə ən son zəlzələ məlumatlarına və analitikasına daxil olun, real vaxt məlumatlarını izləyin.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     )
   },
   {
-    title: "Süni İntellekt",
-    description: "Machine Learning, Deep Learning və AI tətbiqləri haqqında məqalələr və təhlillər.",
+    title: "Mədəniyyət Məkanları",
+    description: "OpenStreetMap API ilə Azərbaycandakı mədəniyyət məkanlarını, tarixi abidələri və muzeyləri kəşf edin.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
       </svg>
     )
   },
   {
-    title: "GIS & Məkan Analizi",
-    description: "Coğrafi məlumat sistemləri, məkansal analiz və xəritələşdirmə həllərini araşdırın.",
+    title: "Məkan Analizi",
+    description: "Coğrafi məlumat sistemlərini üzərindən təhlillər apararaq məkansal naxışları və əlaqələri aşkarlayın.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
       </svg>
     )
   },
   {
-    title: "Zəlzələ İzləmə",
-    description: "Real-time zəlzələ monitorinqi və hər yarım saatda avtomatik yenilənən məlumatlarla risk təhlili.",
+    title: "Təbii Fəlakət İzləmə",
+    description: "Zəlzələ, daşqın və digər təbii fəlakətləri izləyin, keçmiş hadisələri analiz edin və risklərə görə məlumat əldə edin.",
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-    ),
-    link: "/earthquakes",
-    linkText: "Xəritəyə baxın"
+    )
   }
 ];
 
 export function WorldMapDemo() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Haqqımızda bölməsinə kaydırma funksiyası
-  const scrollToAbout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const aboutSection = document.getElementById('about-section');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  // Əlaqə modalını açıb-bağlama funksiyası
   const toggleContactModal = (e: React.MouseEvent) => {
     e.preventDefault();
     setShowContactModal(!showContactModal);
   };
-  
+
+  const toggleComingSoonModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowComingSoonModal(!showComingSoonModal);
+  };
+
   // Açılır pəncərəni xaricində klik ediləndə bağlamaq üçün
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,7 +68,7 @@ export function WorldMapDemo() {
         setIsDropdownOpen(false);
       }
     }
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -101,59 +96,75 @@ export function WorldMapDemo() {
                 AIXERIS
               </div>
             </div>
-            
-            {/* Dropdown Menu */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
-              >
-                <span className="z-10 relative">Xəritələr</span>
-                <svg 
-                  className={`w-4 h-4 transition-transform duration-200 z-10 relative ${isDropdownOpen ? 'transform rotate-180' : ''}`} 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-                <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-              </button>
 
-              {/* Dropdown Content */}
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#0A1A2F] border border-[#00B4A2]/20 shadow-lg py-2 z-50">
-                  <a
-                    href="/earthquakes"
-                    className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
+            {/* Buttons Container */}
+            <div className="flex items-center space-x-4">
+              {/* Alətlər Button */}
+              <Link
+                href="/scripts"
+                className="rounded-full bg-gradient-to-r from-[#8B6FFF] to-[#00E5CC] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
+              >
+                <span className="z-10 relative flex items-center">
+                  <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  Alətlər
+                </span>
+                <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+              </Link>
+
+              {/* Dropdown Menu */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="rounded-full bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF] px-6 py-2 text-sm font-semibold text-white shadow-lg hover:shadow-[#00B4A2]/30 transition-all duration-300 hover:scale-105 flex items-center space-x-2 relative overflow-hidden group"
+                >
+                  <span className="z-10 relative">Xəritələr</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 z-10 relative ${isDropdownOpen ? 'transform rotate-180' : ''}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <span className="text-[#00E5CC] bg-[#00B4A2]/10 p-1.5 rounded-md flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                    </span>
-                    <div>
-                      <div className="font-medium text-white">Zəlzələ Xəritəsi</div>
-                      <div className="text-xs text-gray-400">Hər 30 dəqiqədə yenilənir</div>
-                    </div>
-                  </a>
-                  <div className="border-t border-[#00B4A2]/10 my-1"></div>
-                  <a
-                    href="/spatial-analysis"
-                    className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
-                  >
-                    <span className="text-[#00E5CC] bg-[#00B4A2]/10 p-1.5 rounded-md flex items-center justify-center">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </span>
-                    <div>
-                      <div className="font-medium text-white">Məkan Analizi</div>
-                      <div className="text-xs text-gray-400">Müxtəlif xəritələr mövcuddur</div>
-                    </div>
-                  </a>
-                </div>
-              )}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+                </button>
+
+                {/* Dropdown Content */}
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 rounded-xl bg-[#0A1A2F] border border-[#00B4A2]/20 shadow-lg py-2 z-50">
+                    <a
+                      href="/spatial-analysis"
+                      className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
+                    >
+                      <span className="text-[#00E5CC] bg-[#00B4A2]/10 p-1.5 rounded-md flex items-center justify-center">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </span>
+                      <div>
+                        <div className="font-medium text-white">Məkan Analizi</div>
+                        <div className="text-xs text-gray-400">Müxtəlif xəritələr mövcuddur</div>
+                      </div>
+                    </a>
+                    <a
+                      href="/analysis-tools"
+                      className="block px-4 py-3 text-sm text-gray-200 hover:bg-[#00B4A2]/10 transition-colors duration-200 flex items-center space-x-2"
+                    >
+                      <span className="text-[#8B6FFF] bg-[#8B6FFF]/10 p-1.5 rounded-md flex items-center justify-center">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                      </span>
+                      <div>
+                        <div className="font-medium text-white">Analiz İmkanları</div>
+                        <div className="text-xs text-gray-400">Vizual & data alətləri</div>
+                      </div>
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -191,32 +202,31 @@ export function WorldMapDemo() {
                       Texnologiya və Məkan Zəkası
                     </h2>
                   </motion.div>
-                  
-                  <motion.p 
+
+                  <motion.p
                     className="mt-6 text-xl leading-8 text-gray-200 max-w-2xl drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                   >
-                    Texnoloji yenilikləri, süni intellekt araşdırmalarını və coğrafi məlumat 
-                    sistemlərini bir araya gətirən platforma. Gələcəyin texnologiyalarını 
-                    kəşf edin, AI təhlilləri ilə tanış olun və məkansal analiz həllərini 
+                    Texnoloji yenilikləri, süni intellekt araşdırmalarını və coğrafi məlumat
+                    sistemlərini bir araya gətirən platforma. Gələcəyin texnologiyalarını
+                    kəşf edin, AI təhlilləri ilə tanış olun və məkansal analiz həllərini
                     araşdırın.
                   </motion.p>
 
-                  <motion.div 
+                  <motion.div
                     className="mt-8 flex flex-wrap gap-4"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4, duration: 0.5 }}
                   >
-                    <a
-                      href="#about-section"
-                      onClick={scrollToAbout}
+                    <Link
+                      href="/about"
                       className="rounded-full px-8 py-4 text-base font-semibold text-white border-2 border-[#00B4A2] hover:border-[#00E5CC] hover:bg-[#00B4A2]/10 transition-all duration-300 hover:scale-105"
                     >
                       Haqqımızda
-                    </a>
+                    </Link>
                     <a
                       href="#"
                       onClick={toggleContactModal}
@@ -259,104 +269,208 @@ export function WorldMapDemo() {
           </div>
         </div>
 
-        {/* About Section Anchor */}
-        <div id="about-section" className="relative -top-24"></div>
-        
-        {/* About Section Content */}
-        <div className="py-32 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left side - Photo */}
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                className="relative"
-              >
-                <div className="relative w-full aspect-square max-w-md mx-auto">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] rounded-2xl transform rotate-6 blur-2xl opacity-20"></div>
-                  <div className="relative bg-[#0A1A2F]/50 backdrop-blur-sm rounded-2xl overflow-hidden border-2 border-[#00B4A2]/20 shadow-2xl">
-                    {/* Real photo instead of placeholder */}
-                    <div className="aspect-square w-full relative">
-                      <Image
-                        src="/haqqimda.jpeg"
-                        alt="Aixeris Haqqında"
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+        {/* GIS Software Section */}
+        <div className="py-24 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50 relative overflow-hidden">
+          {/* Background decorative elements */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+            <div className="absolute top-10 left-[10%] w-72 h-72 bg-[#00E5CC]/10 rounded-full filter blur-3xl"></div>
+            <div className="absolute bottom-10 right-[10%] w-96 h-96 bg-[#8B6FFF]/10 rounded-full filter blur-3xl"></div>
+            <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-[#00B4A2]/10 rounded-full filter blur-3xl"></div>
 
-              {/* Right side - About content */}
+            {/* Grid pattern overlay */}
+            <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+          </div>
+
+          <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-16 text-center"
+            >
               <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                className="space-y-6"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.7 }}
               >
-                <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
-                  Haqqımızda
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF] drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
+                  GİS Proqram Təminatları
                 </h2>
-                <p className="text-xl text-gray-200 leading-relaxed">
-                  Biz texnologiya və məkan analizi sahəsində ixtisaslaşmış bir komandayıq. 
-                  Süni intellekt və coğrafi məlumat sistemlərini birləşdirərək, 
-                  innovativ həllər yaradırıq.
-                </p>
-                <p className="text-xl text-gray-200 leading-relaxed">
-                  Məqsədimiz müasir texnologiyaları istifadə edərək, 
-                  cəmiyyətə faydalı və dəyərli məhsullar təqdim etməkdir.
-                </p>
               </motion.div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="text-xl text-gray-300 max-w-3xl mx-auto"
+              >
+                Məkan analizləri və xəritələmə üçün ən yaxşı açıq mənbə proqram təminatlarını yükləyin
+              </motion.p>
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: "8rem" }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="h-1 mx-auto mt-6 bg-gradient-to-r from-[#00E5CC] to-[#8B6FFF]"
+              ></motion.div>
+            </motion.div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {/* QGIS */}
+              <motion.a
+                href="https://www.qgis.org/en/site/forusers/download.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Qgis-icon.svg"
+                    alt="QGIS Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">QGIS</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Peşəkar GİS proqramı</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* PostgreSQL */}
+              <motion.a
+                href="https://www.postgresql.org/download/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Postgresql-icon.svg"
+                    alt="PostgreSQL Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">PostgreSQL</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Güclü verilənlər bazası</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* PostGIS */}
+              <motion.a
+                href="https://postgis.net/install/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Postgis-icon.png"
+                    alt="PostGIS Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">PostGIS</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Məkan verilənləri genişlənməsi</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* GeoServer */}
+              <motion.a
+                href="http://geoserver.org/download/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Geoserver-icon.png"
+                    alt="GeoServer Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">GeoServer</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Məkan məlumatları serveri</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
+
+              {/* QField */}
+              <motion.a
+                href="https://qfield.org/get/"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                whileHover={{ y: -10, transition: { duration: 0.2 } }}
+                className="flex flex-col items-center group relative"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-white to-gray-100 rounded-2xl p-4 border border-[#00B4A2]/20 flex items-center justify-center mb-4 transform transition-all duration-300 group-hover:border-[#00E5CC]/40 group-hover:shadow-xl group-hover:shadow-[#00B4A2]/20 relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Image
+                    src="/Logo-icon/Qfield-icon.png"
+                    alt="QField Logo"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain relative z-10 drop-shadow-md transition-all duration-300 group-hover:drop-shadow-lg"
+                    unoptimized
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors">QField</h3>
+                <p className="text-sm text-gray-400 text-center mt-1">Mobil GİS həlli</p>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-[#00E5CC] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              </motion.a>
             </div>
           </div>
         </div>
 
         {/* Features Section */}
-        <div className="py-24 bg-gradient-to-b from-[#142F47]/50 to-[#1A1A24]">
+        <div className="py-24 bg-gradient-to-b from-[#142F47]/50 via-[#1A1A24] to-[#142F47]/50">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-white drop-shadow-[0_0_10px_rgba(0,180,162,0.3)] sm:text-4xl">
-                Platformamızın Təklif Etdiyi Mövzular
-              </h2>
-              <p className="mt-6 text-lg leading-8 text-gray-200">
-                Texnologiya, süni intellekt və coğrafi məlumat sistemləri sahəsində 
-                ən son yeniliklər və araşdırmalar
-              </p>
-            </div>
-            <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-              <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-4">
-                {features.map((feature) => (
-                  <motion.div 
-                    key={feature.title}
-                    className="flex flex-col bg-[#0A1A2F]/50 backdrop-blur-sm rounded-2xl p-8 border border-[#00B4A2]/20 hover:border-[#00E5CC] transition-all duration-300 shadow-lg"
-                    whileHover={{ y: -5, scale: 1.02 }}
-                  >
-                    <dt className="text-3xl mb-4">{feature.icon}</dt>
-                    <dt className="text-xl font-semibold leading-7 text-white drop-shadow-[0_0_10px_rgba(0,180,162,0.3)]">
-                      {feature.title}
-                    </dt>
-                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-200">
-                      <p className="flex-auto">{feature.description}</p>
-                      {feature.link && (
-                        <div className="mt-4">
-                          <a
-                            href={feature.link}
-                            className="inline-flex items-center text-sm font-medium text-[#00E5CC] hover:text-[#8B6FFF] transition-colors duration-300"
-                          >
-                            {feature.linkText}
-                            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                            </svg>
-                          </a>
-                        </div>
-                      )}
-                    </dd>
-                  </motion.div>
-                ))}
-              </dl>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="bg-[#0A1A2F]/50 rounded-xl p-6 border border-[#00B4A2]/20 hover:border-[#00B4A2]/40 transition-all duration-300 hover:shadow-lg hover:shadow-[#00B4A2]/10 group"
+                >
+                  <div className="text-[#00E5CC] bg-[#00B4A2]/10 p-3 rounded-lg inline-block group-hover:scale-110 transition-transform duration-300">
+                    {feature.icon}
+                  </div>
+                  <h3 className="mt-4 text-xl font-semibold text-white">{feature.title}</h3>
+                  <p className="mt-2 text-gray-400">{feature.description}</p>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
@@ -377,7 +491,7 @@ export function WorldMapDemo() {
             </motion.div>
 
             {/* Social Links */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -390,9 +504,9 @@ export function WorldMapDemo() {
                 className="text-gray-400 hover:text-white transition-colors duration-300"
               >
                 <span className="sr-only">LinkedIn</span>
-                <svg 
-                  className="h-6 w-6" 
-                  fill="currentColor" 
+                <svg
+                  className="h-6 w-6"
+                  fill="currentColor"
                   viewBox="0 0 24 24"
                 >
                   <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
@@ -440,7 +554,7 @@ export function WorldMapDemo() {
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
               onClick={toggleContactModal}
             />
-            
+
             {/* Modal */}
             <div className="fixed inset-0 flex items-center justify-center z-50">
               <motion.div
@@ -453,7 +567,7 @@ export function WorldMapDemo() {
                   <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF]">
                     Bizimlə Əlaqə
                   </h3>
-                  <button 
+                  <button
                     onClick={toggleContactModal}
                     className="text-gray-400 hover:text-white transition-colors"
                   >
@@ -464,8 +578,8 @@ export function WorldMapDemo() {
                 </div>
 
                 <div className="space-y-4">
-                  <a 
-                    href="mailto:aixerisoffical@gmail.com" 
+                  <a
+                    href="mailto:aixerisoffical@gmail.com"
                     className="flex items-center p-4 rounded-xl bg-[#142F47] hover:bg-[#1A3A58] transition-colors duration-200"
                   >
                     <span className="bg-[#00B4A2]/20 text-[#00E5CC] p-3 rounded-lg mr-4">
@@ -479,8 +593,8 @@ export function WorldMapDemo() {
                     </div>
                   </a>
 
-                  <a 
-                    href="https://www.linkedin.com/in/huseyn-huseynli-9a843a309/" 
+                  <a
+                    href="https://www.linkedin.com/in/huseyn-huseynli-9a843a309/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center p-4 rounded-xl bg-[#142F47] hover:bg-[#1A3A58] transition-colors duration-200"
@@ -512,6 +626,60 @@ export function WorldMapDemo() {
                       <div className="text-sm text-gray-300">@_huseynn._</div>
                     </div>
                   </a>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Coming Soon Modal */}
+      <AnimatePresence>
+        {showComingSoonModal && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              onClick={toggleComingSoonModal}
+            />
+
+            {/* Modal */}
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="bg-[#0A1A2F] rounded-2xl border border-[#00B4A2]/20 p-8 shadow-2xl w-[90%] max-w-md mx-auto"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E5CC] via-[#00B4A2] to-[#8B6FFF]">
+                    Tezliklə
+                  </h3>
+                  <button
+                    onClick={toggleComingSoonModal}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="text-center py-8">
+                  <div className="text-[#00E5CC] mb-4">
+                    <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-300 text-lg mb-2">
+                    Bu funksionallıq hələ hazırlanır
+                  </p>
+                  <p className="text-gray-400">
+                    Biz daim xüsusiyyətləri təkmilləşdiririk və tezliklə sizə daha çox imkanlar təqdim edəcəyik
+                  </p>
                 </div>
               </motion.div>
             </div>
