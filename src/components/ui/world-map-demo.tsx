@@ -225,7 +225,7 @@ export function WorldMapDemo() {
                       href="/about"
                       className="rounded-full px-8 py-4 text-base font-semibold text-white border-2 border-[#00B4A2] hover:border-[#00E5CC] hover:bg-[#00B4A2]/10 transition-all duration-300 hover:scale-105"
                     >
-                      Haqqımızda
+                      Haqqımda
                     </Link>
                     <a
                       href="#"
