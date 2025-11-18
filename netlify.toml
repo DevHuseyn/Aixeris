@@ -1,13 +1,9 @@
 [build]
-  command = "npm run build"
+  command = "npm run export"
   publish = "out"
 
 [build.environment]
   NODE_VERSION = "20"
-  NEXT_USE_NETLIFY_EDGE = "true"
-  
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
 
 # Next.js için doğru yönlendirmeler
 [[redirects]]

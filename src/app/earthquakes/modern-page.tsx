@@ -544,9 +544,8 @@ export default function ModernEarthquakesPage() {
       {/* Əsas Məzmun */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <div className="flex flex-col items-center justify-center py-20">
             <LoadingSpinner />
-            <p className="text-gray-200 text-lg">Zəlzələ məlumatları yüklənir...</p>
           </div>
         ) : hasSearched ? (
           <>
