@@ -18,7 +18,7 @@ Bu proje Netlify'da statik bir site olarak deploy edilmek üzere hazırlanmışt
 1. Netlify'da yeni bir site oluşturun
 2. GitHub veya başka bir git sağlayıcısından repo'yu bağlayın
 3. Build ayarlarını şu şəkildə qurun:
-   - Build command: `npm run export`
+   - Build command: `npm run build`
    - Publish directory: `out`
 4. Deploy butonuna tıklayın
 
